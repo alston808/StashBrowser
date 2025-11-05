@@ -80,13 +80,13 @@ src/
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `VITE_STASH_GRAPHQL_URL` | Stash GraphQL endpoint | `https://x.alst.site/graphql` |
+| `VITE_STASH_GRAPHQL_URL` | Stash GraphQL endpoint | `http://localhost:9999/graphql` |
 | `VITE_STASH_API_KEY` | Stash API key for authentication | Required |
 
 ## Building for Production
 
 ```bash
-npm run build
+bun run build
 ```
 
 The built files will be in the `build/` directory.
