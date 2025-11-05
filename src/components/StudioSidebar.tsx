@@ -24,7 +24,7 @@ export default function StudioSidebar({ studios, selectedStudio, onStudioSelect,
           className="text-2xl hover:scale-110 transition-transform duration-300 cursor-pointer"
           title="Back to Home"
         >
-          🎯
+          🤙🏾
         </button>
       </div>
       <ScrollArea className="h-[calc(100vh-5rem)]">

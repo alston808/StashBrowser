@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQuery } from '@apollo/client';
 import { useIntersectionObserver } from '../lib/useIntersectionObserver';
 import StudioSidebar from './StudioSidebar';
@@ -51,8 +51,9 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 		variables: { filter: { per_page: 100 } }
 	});
 
-	const { data: performersData } = useQuery(FindPerformersForScroller, {
-		variables: { filter: { per_page: 100 } }
+	const PERFORMERS_PER_PAGE = 50;
+	const { data: performersData, loading: performersLoading, fetchMore: fetchMorePerformers } = useQuery(FindPerformersForScroller, {
+		variables: { filter: { page: 1, per_page: PERFORMERS_PER_PAGE } }
 	});
 
 	// Scenes query with infinite scroll
@@ -109,7 +110,7 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 		rootMargin: '100px'
 	});
 
-	const loadMore = () => {
+	const loadMore = useCallback(() => {
 		if (scenesLoading || !hasMore) return;
 
 		const currentPage = Math.ceil(scenes.length / PER_PAGE) + 1;
@@ -152,12 +153,14 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 			console.error('Error loading more scenes:', err);
 			resetTrigger(); // Reset even on error so user can retry
 		});
-	};
+	}, [scenesLoading, hasMore, scenes.length, fetchMore, resetTrigger, searchQuery, selectedTags, selectedStudio, selectedPerformer]);
 
 	// Trigger load more when intersection observer detects visibility
-	if (shouldLoadMore && hasMore && !scenesLoading) {
-		loadMore();
-	}
+	useEffect(() => {
+		if (shouldLoadMore && hasMore && !scenesLoading) {
+			loadMore();
+		}
+	}, [shouldLoadMore, hasMore, scenesLoading, loadMore]);
 
 	// Transform data to match component interfaces
 	const availableTags = tagsData?.findTags?.tags?.map((tag: any) => ({
@@ -173,12 +176,31 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 	})) || [];
 
 	const rawPerformers = performersData?.findPerformers?.performers ?? []
+	const performersTotalCount = performersData?.findPerformers?.count ?? 0
 	const uniquePerformers = rawPerformers.filter((p, i, a) => a.findIndex(x => x.id === p.id) === i)
 	const performers = uniquePerformers.map(performer => ({
 		id: performer.id,
 		name: performer.name,
 		image: createAuthenticatedImageUrl(performer.image_path, performer.id, 'performer') || ''
 	}))
+	const hasMorePerformers = performers.length < performersTotalCount
+
+	const loadMorePerformers = useCallback(() => {
+		if (performersLoading || !hasMorePerformers) return;
+
+		const currentPage = Math.ceil(performers.length / PERFORMERS_PER_PAGE) + 1;
+
+		fetchMorePerformers({
+			variables: {
+				filter: {
+					page: currentPage,
+					per_page: PERFORMERS_PER_PAGE
+				}
+			}
+		}).catch((err) => {
+			console.error('Error loading more performers:', err);
+		});
+	}, [performersLoading, hasMorePerformers, performers.length, fetchMorePerformers]);
 
 	// Transform scenes data to match EpisodeGrid interface
 	const episodes = useMemo(() => {
@@ -415,6 +437,9 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
             onPerformerSelect={(performerId) => {
               setSelectedPerformer(performerId);
             }}
+            hasMore={hasMorePerformers}
+            isLoading={performersLoading}
+            onLoadMore={loadMorePerformers}
           />
         </div>
 

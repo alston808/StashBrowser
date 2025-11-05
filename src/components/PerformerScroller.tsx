@@ -1,5 +1,5 @@
-import { useRef, memo } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, memo, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface Performer {
@@ -12,10 +12,21 @@ interface PerformerScrollerProps {
   performers: Performer[];
   selectedPerformer: string | null;
   onPerformerSelect: (performer: string | null) => void;
+  hasMore?: boolean;
+  isLoading?: boolean;
+  onLoadMore?: () => void;
 }
 
-const PerformerScroller = memo(function PerformerScroller({ performers, selectedPerformer, onPerformerSelect }: PerformerScrollerProps) {
+const PerformerScroller = memo(function PerformerScroller({
+  performers,
+  selectedPerformer,
+  onPerformerSelect,
+  hasMore = false,
+  isLoading = false,
+  onLoadMore
+}: PerformerScrollerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -26,6 +37,33 @@ const PerformerScroller = memo(function PerformerScroller({ performers, selected
       });
     }
   };
+
+  // Handle horizontal scroll to load more
+  useEffect(() => {
+    const scrollElement = scrollRef.current;
+    if (!scrollElement || !onLoadMore) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollElement;
+      const scrollPercentage = (scrollLeft + clientWidth) / scrollWidth;
+
+      // Load more when scrolled 80% to the right
+      if (scrollPercentage > 0.8 && hasMore && !isLoading && !loadingRef.current) {
+        loadingRef.current = true;
+        onLoadMore();
+      }
+    };
+
+    scrollElement.addEventListener('scroll', handleScroll);
+    return () => scrollElement.removeEventListener('scroll', handleScroll);
+  }, [hasMore, isLoading, onLoadMore]);
+
+  // Reset loading ref when loading completes
+  useEffect(() => {
+    if (!isLoading) {
+      loadingRef.current = false;
+    }
+  }, [isLoading]);
 
   return (
     <div className="py-3 px-3 md:py-4 md:px-6 relative group/scroller">
@@ -91,6 +129,20 @@ const PerformerScroller = memo(function PerformerScroller({ performers, selected
             </div>
           </button>
         ))}
+
+        {/* Loading indicator */}
+        {isLoading && (
+          <div className="flex-shrink-0 flex items-center justify-center w-20 md:w-28">
+            <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
+          </div>
+        )}
+
+        {/* End indicator */}
+        {!hasMore && performers.length > 0 && (
+          <div className="flex-shrink-0 flex items-center justify-center w-20 md:w-28 text-xs text-gray-500">
+            •
+          </div>
+        )}
       </div>
     </div>
   );
