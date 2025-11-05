@@ -252,7 +252,7 @@ export default function SearchBar({
         onClick={onHomeClick}
         className="hidden md:flex items-center gap-2 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
       >
-        <div className="text-2xl">📦</div>
+        <img src="/logo.svg" alt="StashBrowser" className="w-6 h-6" />
         <span className="bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500 bg-clip-text text-transparent tracking-wider">
           STASHBROWSER
         </span>
