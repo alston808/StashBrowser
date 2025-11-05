@@ -44,3 +44,4 @@ export function useIntersectionObserver(
 
   return { ref, isIntersecting, hasTriggered, resetTrigger }
 }
+
