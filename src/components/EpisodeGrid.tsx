@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { ScrollArea } from './ui/scroll-area';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Play } from 'lucide-react';
@@ -26,7 +26,7 @@ interface EpisodeGridProps {
   isLoading?: boolean;
 }
 
-export default function EpisodeGrid({ episodes, onEpisodeSelect, onTagClick, loadMoreRef, hasMore, isLoading }: EpisodeGridProps) {
+const EpisodeGrid = memo(function EpisodeGrid({ episodes, onEpisodeSelect, onTagClick, loadMoreRef, hasMore, isLoading }: EpisodeGridProps) {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   return (
@@ -150,4 +150,6 @@ export default function EpisodeGrid({ episodes, onEpisodeSelect, onTagClick, loa
       </div>
     </ScrollArea>
   );
-}
+});
+
+export default EpisodeGrid;

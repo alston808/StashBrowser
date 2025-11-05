@@ -110,7 +110,7 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 	});
 
 	const loadMore = () => {
-		if (loading || !hasMore) return;
+		if (scenesLoading || !hasMore) return;
 
 		const currentPage = Math.ceil(scenes.length / PER_PAGE) + 1;
 
@@ -148,11 +148,14 @@ export default function BrowseScreen({ onVideoSelect }: BrowseScreenProps) {
 			}
 		}).then(() => {
 			resetTrigger(); // Reset the trigger for next load
+		}).catch((err) => {
+			console.error('Error loading more scenes:', err);
+			resetTrigger(); // Reset even on error so user can retry
 		});
 	};
 
 	// Trigger load more when intersection observer detects visibility
-	if (shouldLoadMore && hasMore && !loading) {
+	if (shouldLoadMore && hasMore && !scenesLoading) {
 		loadMore();
 	}
 

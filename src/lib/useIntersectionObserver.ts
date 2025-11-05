@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 interface UseIntersectionObserverOptions {
   threshold?: number
@@ -11,6 +11,7 @@ export function useIntersectionObserver(
 ) {
   const [isIntersecting, setIsIntersecting] = useState(false)
   const [hasTriggered, setHasTriggered] = useState(false)
+  const hasTriggeredRef = useRef(false)
   const ref = useRef<Element>(null)
 
   useEffect(() => {
@@ -21,7 +22,8 @@ export function useIntersectionObserver(
       ([entry]) => {
         setIsIntersecting(entry.isIntersecting)
         // Only trigger once per intersection to prevent multiple loads
-        if (entry.isIntersecting && !hasTriggered) {
+        if (entry.isIntersecting && !hasTriggeredRef.current) {
+          hasTriggeredRef.current = true
           setHasTriggered(true)
         }
       },
@@ -37,10 +39,13 @@ export function useIntersectionObserver(
     return () => {
       observer.unobserve(element)
     }
-  }, [options.threshold, options.root, options.rootMargin, hasTriggered])
+  }, [options.threshold, options.root, options.rootMargin])
 
   // Reset trigger when needed (useful for pagination)
-  const resetTrigger = () => setHasTriggered(false)
+  const resetTrigger = useCallback(() => {
+    hasTriggeredRef.current = false
+    setHasTriggered(false)
+  }, [])
 
   return { ref, isIntersecting, hasTriggered, resetTrigger }
 }

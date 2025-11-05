@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, memo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
@@ -14,7 +14,7 @@ interface PerformerScrollerProps {
   onPerformerSelect: (performer: string | null) => void;
 }
 
-export default function PerformerScroller({ performers, selectedPerformer, onPerformerSelect }: PerformerScrollerProps) {
+const PerformerScroller = memo(function PerformerScroller({ performers, selectedPerformer, onPerformerSelect }: PerformerScrollerProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -94,4 +94,6 @@ export default function PerformerScroller({ performers, selectedPerformer, onPer
       </div>
     </div>
   );
-}
+});
+
+export default PerformerScroller;

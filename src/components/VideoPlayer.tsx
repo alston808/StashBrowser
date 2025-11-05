@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Play, Pause, Volume2, VolumeX, Maximize, SkipBack, SkipForward, ArrowLeft } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
@@ -28,7 +28,7 @@ interface VideoPlayerProps {
   onBack: () => void;
 }
 
-export default function VideoPlayer({ video, onBack }: VideoPlayerProps) {
+const VideoPlayer = memo(function VideoPlayer({ video, onBack }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -266,4 +266,6 @@ export default function VideoPlayer({ video, onBack }: VideoPlayerProps) {
       )}
     </div>
   );
-}
+});
+
+export default VideoPlayer;
