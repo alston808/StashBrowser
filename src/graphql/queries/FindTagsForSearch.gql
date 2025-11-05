@@ -1,0 +1,12 @@
+#import "../Fragments.gql"
+
+# query: FindTagsForSearch
+# Fetches all available tags for the search bar.
+query FindTagsForSearch($filter: FindFilterType, $tag_filter: TagFilterType) {
+  findTags(filter: $filter, tag_filter: $tag_filter) {
+    count
+    tags {
+      ...SlimTagData
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# query: GetSceneForPlayer
+# Fetches a single scene by its ID for the player/metadata screen.
+fragment SceneMetadata on Scene {
+  id
+  title
+  details
+  rating100
+  play_count
+  paths {
+    stream
+    screenshot
+  }
+  files { # Corrected: 'files' takes no arguments
+    path
+    duration
+    video_codec
+    audio_codec
+  }
+  studio {
+    id
+    name
+    image_path
+  }
+  performers {
+    id
+    name
+  }
+  tags {
+    id
+    name
+  }
+}
+
+query GetSceneForPlayer($id: ID!) {
+  findScene(id: $id) {
+    ...SceneMetadata # <-- Use the fragment here
+  }
+}

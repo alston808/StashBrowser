@@ -1,0 +1,30 @@
+# query: FindBrowseScenes
+# The main query for finding scenes based on UI filters.
+fragment SceneGridItemData on Scene {
+  id
+  title
+  rating100
+  paths {
+    screenshot
+    preview
+  }
+  files {
+    duration
+  }
+  studio {
+    id
+    name
+  }
+}
+
+query FindBrowseScenes(
+  $filter: FindFilterType
+  $scene_filter: SceneFilterType
+) {
+  findScenes(filter: $filter, scene_filter: $scene_filter) {
+    count
+    scenes {
+      ...SceneGridItemData
+    }
+  }
+}

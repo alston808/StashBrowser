@@ -1,0 +1,19 @@
+# query: FindPerformersForSearch
+# Fetches performers for search bar with pagination support
+fragment PerformerSearchData on Performer {
+  id
+  name
+  image_path
+}
+
+query FindPerformersForSearch(
+  $filter: FindFilterType
+  $performer_filter: PerformerFilterType
+) {
+  findPerformers(filter: $filter, performer_filter: $performer_filter) {
+    count
+    performers {
+      ...PerformerSearchData
+    }
+  }
+}

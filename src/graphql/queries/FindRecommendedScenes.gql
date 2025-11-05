@@ -1,0 +1,29 @@
+# query: FindRecommendedScenes
+# Fetches recommended scenes, likely filtered by tags/performers.
+fragment SceneGridItemData on Scene {
+  id
+  title
+  rating100
+  paths {
+    screenshot
+  }
+  files {
+    duration
+  }
+  studio {
+    id
+    name
+  }
+}
+
+query FindRecommendedScenes(
+  $filter: FindFilterType
+  $scene_filter: SceneFilterType
+) {
+  findScenes(filter: $filter, scene_filter: $scene_filter) {
+    count
+    scenes {
+      ...SceneGridItemData
+    }
+  }
+}

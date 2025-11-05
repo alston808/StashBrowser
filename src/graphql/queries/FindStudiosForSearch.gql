@@ -1,0 +1,19 @@
+# query: FindStudiosForSearch
+# Fetches studios for search bar with pagination support
+fragment StudioSearchData on Studio {
+  id
+  name
+  image_path
+}
+
+query FindStudiosForSearch(
+  $filter: FindFilterType
+  $studio_filter: StudioFilterType
+) {
+  findStudios(filter: $filter, studio_filter: $studio_filter) {
+    count
+    studios {
+      ...StudioSearchData
+    }
+  }
+}

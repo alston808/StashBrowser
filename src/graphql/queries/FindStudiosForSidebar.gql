@@ -1,0 +1,16 @@
+# query: FindStudiosForSidebar
+# Fetches all studios for the sidebar.
+fragment StudioSidebarData on Studio {
+  id
+  name
+  image_path
+}
+
+query FindStudiosForSidebar($filter: FindFilterType) {
+  findStudios(filter: $filter) {
+    count
+    studios {
+      ...StudioSidebarData
+    }
+  }
+}

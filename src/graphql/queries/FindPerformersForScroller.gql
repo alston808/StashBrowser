@@ -1,0 +1,19 @@
+# query: FindPerformersForScroller
+# Fetches performers for the scroller.
+fragment PerformerScrollerData on Performer {
+  id
+  name
+  image_path
+}
+
+query FindPerformersForScroller(
+  $filter: FindFilterType
+  $performer_filter: PerformerFilterType
+) {
+  findPerformers(filter: $filter, performer_filter: $performer_filter) {
+    count
+    performers {
+      ...PerformerScrollerData
+    }
+  }
+}

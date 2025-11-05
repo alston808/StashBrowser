@@ -1,0 +1,9 @@
+# fragment: SlimTagData
+# Used for populating tag lists in search bars.
+fragment SlimTagData on Tag {
+  id
+  name
+}
+
+# Note: Other fragments have been moved inline to their respective query files
+# to resolve GraphQL validation errors about unused fragments.
